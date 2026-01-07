@@ -1,10 +1,28 @@
 const mongoose = require('mongoose')
-const JobsSchema = new mongoose.Schema({
-    COMPANY:{required:[true,'please enter company'],type:String,maxlength:10},
-    POSITION:{required:[true , 'please enter position'],type:String,maxlength:10},
-    STATUS:{required:[true,'please enter status'],type:String,enum:['interview','pending','completed'],default:'pending'},
-    CreatedBy:{type:mongoose.Types.ObjectId,ref:'Profile',required:[true , 'job must be created by user']}},
-{timestamps:true}
+
+const TaskSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Please enter task name'],
+      maxlength: 80,
+      trim: true,
+    },
+
+    password: {
+      type: String,
+      required: [true, 'Please enter password'],
+      trim: true,
+      
+    },
+
+    taskDone: {
+      type: Boolean,
+     
+      default: false,
+    },
+  },
+  { timestamps: true }
 )
 
-module.exports =mongoose.model('JOB',JobsSchema)
+module.exports = mongoose.model('Task', TaskSchema)

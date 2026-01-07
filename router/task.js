@@ -1,9 +1,14 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router()
-const {createTask,getTask,getAllTask,UpdateTask,deleteTask} = require('../contorller/task')
-router.route('/').get(getAllTask).post(createTask)
-router.route('/:id').get(getTask).patch(UpdateTask).delete(deleteTask)
-module.exports = router
 
 
-//app.use('/api/v1/task',AuthMiddleWare,job)
+
+const{Login,dashBoard,CreateTask} = require('../contorller/admin');
+const authMiddlera = require('../middleware/auth');
+
+
+
+    router.route('/').get(authMiddlera,dashBoard).post(Login)
+    router.route('/id').post(CreateTask)
+    
+    module.exports = router

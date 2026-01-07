@@ -2,20 +2,18 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const connectDb = require('./database/dbConnect')
-const authRoute = require('./router/auth')
-const job = require('./router/task')
- const AuthMiddleWare = require('./middleware/auth')
-//middleware
+const taskmanagerroute = require('./router/task')
+const routenotfound = require('./middleware/routenotfound')
+const errorhandlermiddleware = require('./middleware/errorhandler')
 app.use(express.json())
 
-//route
-app.use('/api/v1/auth',authRoute)
-app.use('/api/v1/task',AuthMiddleWare,job)
 
+app.use('/api/v1/users',taskmanagerroute)
 
+app.use(routenotfound)
 
-
-const port = 2222 || process.env.PORT
+app.use(errorhandlermiddleware)
+const port =  process.env.PORT  || 2222 
 
 const start=async()=>{
     try {
