@@ -4,11 +4,17 @@ const router = express.Router()
 
 
 
-const{CreateTask,UpdateTask , DeleteTask , ReadTask } = require('../contorller/Auth');
+const{CreateTask,UpdateTask ,GetTask, DeleteTask , ReadTask } = require('../contorller/Task');
+const authMiddleware = require('../middleware/auth')
 
+router.use(authMiddleware)
 
-
-    router.route('/').get(ReadTask)
-    router.route('/:id').post(CreateTask).delete(DeleteTask).patch(UpdateTask)
+    router.route('/task').
+        get(ReadTask).
+        post(CreateTask)
+    router.route('/task/:id').
+        delete(DeleteTask).
+        patch(UpdateTask).
+        get(GetTask)
     
     module.exports = router

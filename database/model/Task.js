@@ -14,13 +14,13 @@ const TaskModel = new mongoose.Schema({
     },
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:Users,
+        ref:'Users',
         required:true,
 
     },
     updatedBy:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:Users,
+        ref:'Users',
         required:true,
 
     }},
