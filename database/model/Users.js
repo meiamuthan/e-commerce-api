@@ -24,6 +24,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
      required:[true , 'please enter email  unique'],
       unique:true,
+      trim:true,
        maxlength:30
     },
   },

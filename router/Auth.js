@@ -3,11 +3,11 @@ const router = express.Router()
 
 
 
-const{Register , Login , userProfile , deleteProfile} = require('../contorller/Auth');
+const{RegisterUser , LoginUser , getAllUser , deleteProfile} = require('../contorller/Auth');
 
-    router.route('/').get(userProfile)
-    router.route('/Login').post( Login)
-    router.route('/Register').post(Register)
+    router.route('/').get(getAllUser)
+    router.route('/Login').post( LoginUser)
+    router.route('/Register').post(RegisterUser)
   router.route('/:id').delete(deleteProfile)
     
     module.exports = router

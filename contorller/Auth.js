@@ -1,75 +1,90 @@
 require('dotenv').config()
-const user = require('../database/model/Users')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
-
-const Register=async(req,res)=>{
+const User = require('../database/model/Users');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const {StatusCodes} = require('http-status-codes');
+const RegisterUser=async(req,res)=>{
 try {
 const {name,password,email,confirmPassword} = req.body
-if(!name || !password || !email){return res.status(400).json({msg:'please enter all filed'})}
+
+if(!name || !password || !email){
+
+      return res.status(StatusCodes.BAD_REQUEST).json({msg:'please enter all filed'})}
+
 if(password !== confirmPassword){
-      return res.status(400).json({msg:'password not match'})
-}
-   const register = await user.create({name,password,confirmPassword,email})
-   res.status(201).json({msg:register})
 
-console.log(register)
+      return res.status(StatusCodes.BAD_REQUEST).json({msg:'password not match'})
+
+}
+   const NewUser = await User.create({name,password,email})
+   res.status(StatusCodes.CREATED).json({msg:NewUser})
+
+
 } catch (error) {
+
       console.log(error.message)
-      res.status(406).json({msg:'please enter all filed ' })
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:'Cannot Created new User' })
 }
 }
 
-const Login = async(req,res)=>{
+const LoginUser = async(req,res)=>{
 
       try {
             const {email , password}= req.body;
-if(!email || !password){return res.status(400).json({msg:'please enter email or password crctly'})}
-const login = await user.findOne({email })
-
-
-
-
-if(!login){
-      return res.status(400).json({msg:'please enter crct email'})
+if(!email || !password){
+      
+      return res.status(400).json({msg:'please enter email or password crctly'})
 }
 
-const isMatch = await bcrypt.compare(password,login.password);
+ const FoundUser = await User.findOne({email })
+
+
+ if(!FoundUser){
+      return res.status(StatusCodes.NOT_FOUND).json({msg:'please enter crct email'})
+}
+
+const isMatch = await bcrypt.compare(password,FoundUser.password);
+
 if(!isMatch){
-      return res.status(400).json({msg:'password is not matched'})
+      return res.status(StatusCodes.UNAUTHORIZED).json({msg:'password is not matched'})
 }
 
-const token = jwt.sign({name:login.name,email:login.email},process.env.JWT_SECRETKEY,{expiresIn:'1d'})
+const token = jwt.sign({name:FoundUser.name,email:FoundUser.email},process.env.JWT_SECRETKEY,{expiresIn:'1d'})
 
 
-return res.status(200).json({msg:login , token })
 
+console.log(token)
+      return res.status(StatusCodes.OK).json({msg:FoundUser  })
 
-      } catch (error) { 
-            res.status(400).json({msg:error.message})
+} catch (error) { 
+
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:'fetch to fetch all users'})
       }
       
 }
 
 
-const userProfile = async(req,res)=>{
+
+//get all user
+
+const getAllUser = async(req,res)=>{
       try {
-            const profile = await user.find()
-            res.status(200).json({msg:profile})
+            const AllUser = await User.find()
+            res.status(StatusCodes.OK).json({msg:AllUser})
       } catch (error) {
             console.log(error.message)
-            res.status(400).json({msg:'not fetched crctly'})
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:'not fetched crctly'})
       }
-      res.status(200).json({msg:'userprofile'})
+      res.status(StatusCodes.OK).json({msg:AllUser})
 }
 
 const deleteProfile = async (req,res)=>{
       try {
-            const deleteProfile = await user.deleteMany()
+            const deleteProfile = await User.deleteMany()
             res.status(200).json({msg:'deleted sucess'})
       } catch (error) {
             res.status(400).json({msg:error.message})
       }
 }
 
-module.exports = {Register , Login , userProfile , deleteProfile}
+module.exports = {RegisterUser , LoginUser , getAllUser , deleteProfile}
